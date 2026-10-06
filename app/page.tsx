@@ -6,10 +6,12 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowDown, ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import ExperienceTimeline, { type Experience } from './experience-timeline'
+import ArchitecturePreview from './architecture-diagram'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const caseStudies = [
+const caseStudies: Experience[] = [
   { number: '01', title: 'LegalTech SaaS platform', org: 'LURA LAW', role: 'Full Stack & DevOps Intern', period: 'February 2026 – July 2026', location: 'Hybrid', tags: ['Next.js', 'NestJS', 'RAG', 'Azure'], summary: 'Developed a LegalTech SaaS platform while shaping the path from application code to secure cloud delivery.', bullets: ['Built asynchronous processing workflows using Redis and BullMQ.', 'Migrated infrastructure from DigitalOcean to Microsoft Azure.', 'Provisioned AKS with Terraform and Infrastructure as Code; automated CI/CD with GitHub Actions, GHCR, and Helm.'] },
   { number: '02', title: 'B2B SaaS global distribution platform', org: 'B-SMART TRAVEL', role: 'Full Stack & DevOps Intern', period: 'February 2025 – November 2025', location: 'Tunis, Tunisia', tags: ['React', 'Node.js', 'Docker', 'CI/CD'], summary: 'Developed a B2B SaaS platform for global distribution with real-time booking features for travel services.', bullets: ['Implemented real-time booking features for travel services.', 'Optimized B2B workflows to improve operational efficiency.', 'Built CI/CD pipelines for continuous deployment.'] },
   { number: '03', title: 'Customer management and activity dashboards', org: 'COMUNIK CRM', role: 'Full Stack Intern', period: 'June 2024 – August 2024', location: 'Tunis, Tunisia', tags: ['React', 'Node.js', 'WebSockets', 'TailwindCSS'], summary: 'Worked across an interactive customer-management frontend and backend services for real-time data processing.', bullets: ['Developed an interactive frontend for customer management.', 'Designed backend services for real-time data processing.', 'Implemented dynamic dashboards for activity tracking.'] },
@@ -77,6 +79,9 @@ export default function Page() {
     offset: ['start start', 'end end'],
   })
   const workX = useTransform(scrollYProgress, [0, 1], ['0%', '-75%'])
+  const architectureScale = useTransform(scrollYProgress, [0, 0.08, 0.2, 0.34], [0.9, 2, 2, 0.72])
+  const architectureX = useTransform(scrollYProgress, [0, 0.08, 0.2, 0.34], [0, 0, 360, 360])
+  const architectureOpacity = useTransform(scrollYProgress, [0, 0.08, 0.24, 0.34], [0.72, 1, 1, 0])
   const [menuOpen, setMenuOpen] = useState(false)
   const [isLight, setIsLight] = useState(true)
   const [mailCopied, setMailCopied] = useState(false)
@@ -260,18 +265,18 @@ export default function Page() {
 
     <section id="work" ref={workContainerRef} className="horizontal-work-section">
       <div className="horizontal-work-sticky">
+        <div className="section-head work-head horizontal-work-intro">
+          <p className="eyebrow">03 / SELECTED PROFESSIONAL WORK</p>
+          <h2>Internship <em>case studies.</em></h2>
+          <p className="section-note">Four professional experiences across product development, cloud infrastructure, and delivery workflows.</p>
+        </div>
         <motion.div className="horizontal-work-track" style={{ x: prefersReducedMotion ? undefined : workX }}>
-          <div className="section-head work-head horizontal-work-intro">
-            <p className="eyebrow">03 / SELECTED PROFESSIONAL WORK</p>
-            <h2>Internship<br /><em>case studies.</em></h2>
-            <p className="section-note">Four professional experiences across product development, cloud infrastructure, and delivery workflows.</p>
-          </div>
-          <div className="case-list">{caseStudies.map((item, i) => <article className="case-study" key={item.org}><div className="case-number mono">{item.number}</div><div className="case-main"><div className="case-meta"><span>{item.org}</span><span>{item.period}</span></div><h3>{item.title}</h3><p className="case-role">{item.role} <i>·</i> {item.location}</p><p className="case-summary">{item.summary}</p><ul>{item.bullets.map(b => <li key={b}>{b}</li>)}</ul><div className="tags" aria-label="Technologies used">{item.tags.map(t => <span className="skill-chip" key={t} aria-label={t} title={t}><SkillMark skill={t} /></span>)}</div></div><div className={`case-mark mark-${i + 1}`} aria-hidden="true"><span /></div></article>)}</div>
+          <div className="case-list">{caseStudies.map((item, i) => <article className="case-study" key={item.org}><div className="case-number mono">{item.number}</div><div className="case-main"><div className="case-meta"><span>{item.org}</span><span>{item.period}</span></div><h3>{item.title}</h3><p className="case-role">{item.role} <i>·</i> {item.location}</p><p className="case-summary">{item.summary}</p><ul>{item.bullets.map(b => <li key={b}>{b}</li>)}</ul><div className="tags" aria-label="Technologies used">{item.tags.map(t => <span className="skill-chip" key={t} aria-label={t} title={t}><SkillMark skill={t} /></span>)}</div></div>{i === 0 ? <ArchitecturePreview style={{ x: architectureX, scale: architectureScale, opacity: architectureOpacity }} /> : <div className={`case-mark mark-${i + 1}`} aria-hidden="true"><span /></div>}</article>)}</div>
         </motion.div>
       </div>
     </section>
 
-    <section id="experience" className="section shell timeline-section"><div className="section-head"><p className="eyebrow">04 / EXPERIENCE</p><h2>Built through<br /><em>practice.</em></h2></div><div className="timeline">{caseStudies.map(item => <div className="timeline-item" key={item.org}><div className="timeline-dot" /><p className="mono timeline-date">{item.period}</p><div><h3>{item.role}</h3><p className="timeline-org">{item.org} <span>—</span> {item.location}</p><p className="timeline-summary">{item.summary}</p></div></div>)}</div></section>
+    <ExperienceTimeline experiences={caseStudies} />
 
     <section className="section shell skills-section"><div className="section-head"><p className="eyebrow">05 / TECHNICAL SKILLS</p><h2>Tools for<br /><em>the system.</em></h2></div><div className="skills-grid">{skillGroups.map(([name, skills]) => <div className="skill-group" key={name as string}><p className="mono">{name as string}</p><div className="skill-marks">{(skills as string[]).map((skill, index) => <span className="skill-chip" style={{ '--delay': `${index * 90}ms` } as React.CSSProperties} key={skill} aria-label={skill} title={skill}><SkillMark skill={skill} /></span>)}</div></div>)}</div></section>
 

@@ -810,6 +810,33 @@ h1 em,h2 em { color:var(--accent); font-style:normal; }
 :root[data-theme='light'] .hero-scroll-cue { color:rgba(20,32,37,.72); }
 :root[data-theme='light'] .hero-scroll-cue:hover { color:#142025; }
 
+.desktop-experience { position:fixed; inset:0; z-index:100; display:grid; place-items:center; overflow:hidden; background:#f3f4f6; color:#18212b; isolation:isolate; padding:clamp(2rem,5vw,5rem); }
+.desktop-experience-grid { position:absolute; inset:0; z-index:-1; opacity:.55; background-image:linear-gradient(rgba(24,33,43,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(24,33,43,.055) 1px,transparent 1px); background-size:clamp(2.5rem,5vw,4.5rem) clamp(2.5rem,5vw,4.5rem); mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 92%); }
+.desktop-experience-content { display:flex; flex-direction:column; align-items:center; width:min(100%,44rem); text-align:center; }
+.desktop-experience-mark { position:relative; display:flex; align-items:center; justify-content:center; width:12rem; height:8rem; margin-bottom:1.3rem; color:#344454; }
+.desktop-experience-laptop { position:relative; z-index:1; display:grid; place-items:center; width:7rem; height:5rem; border:1px solid rgba(52,68,84,.35); border-radius:.7rem; background:rgba(255,255,255,.58); box-shadow:0 1.2rem 2rem rgba(52,68,84,.12); }
+.desktop-experience-laptop svg { width:4.4rem; height:4.4rem; }
+.desktop-experience-laptop::after { content:''; position:absolute; right:-.75rem; bottom:-.5rem; left:-.75rem; height:.22rem; border-radius:999px; background:#344454; opacity:.7; }
+.desktop-experience-pulse { position:absolute; inset:50% auto auto 50%; width:8rem; height:8rem; border:1px solid rgba(52,68,84,.28); border-radius:50%; transform:translate(-50%,-50%); }
+.desktop-experience-mouse { position:absolute; right:.4rem; bottom:-.1rem; display:grid; place-items:center; width:2.15rem; height:3rem; border:1px solid rgba(52,68,84,.38); border-radius:1.2rem; background:rgba(255,255,255,.7); }
+.desktop-experience-mouse svg { width:1.2rem; height:1.2rem; }
+.desktop-experience-arrow { position:absolute; right:-2rem; bottom:1.2rem; color:#7b5cff; }
+.desktop-experience-eyebrow { display:flex; align-items:center; gap:.45rem; margin:0 0 1.1rem; color:#7b5cff; font:600 .68rem ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
+.desktop-experience-content h1 { max-width:38rem; margin:0; color:#18212b; font-family:var(--font-display); font-size:clamp(2.4rem,5vw,4.8rem); line-height:.95; letter-spacing:-.075em; }
+.desktop-experience-description { max-width:34rem; margin:1.4rem 0 0; color:#5d6977; font-size:clamp(.95rem,1.4vw,1.08rem); line-height:1.7; }
+.desktop-experience-best-viewed { display:flex; align-items:center; gap:1rem; margin:1.7rem 0 0; color:#344454; font-size:.82rem; }
+.desktop-experience-best-viewed p { margin:0; font-weight:700; }
+.desktop-experience-best-viewed ul { display:flex; flex-wrap:wrap; gap:.8rem; margin:0; padding:0; list-style:none; color:#647181; }
+.desktop-experience-best-viewed li::before { content:'✓'; margin-right:.3rem; color:#7b5cff; font-weight:800; }
+.desktop-experience-actions { display:flex; align-items:center; gap:.8rem; margin-top:2rem; }
+.desktop-experience-button { display:inline-flex; align-items:center; justify-content:center; gap:.6rem; min-height:2.9rem; padding:.75rem 1.15rem; border:1px solid transparent; border-radius:999px; font-size:.78rem; font-weight:700; transition:transform .2s ease,box-shadow .2s ease,background .2s ease; }
+.desktop-experience-button:hover { transform:translateY(-2px); }
+.desktop-experience-button-primary { background:#18212b; color:#fff; box-shadow:0 .7rem 1.4rem rgba(24,33,43,.16); }
+.desktop-experience-button-primary:hover { background:#344454; box-shadow:0 .9rem 1.7rem rgba(24,33,43,.22); }
+.desktop-experience-button-secondary { border-color:rgba(52,68,84,.25); color:#344454; background:rgba(255,255,255,.45); }
+.desktop-experience-button-secondary:hover { border-color:#7b5cff; background:#fff; }
+.desktop-experience-footer { position:absolute; right:clamp(1.5rem,4vw,4rem); bottom:1.5rem; left:clamp(1.5rem,4vw,4rem); color:#8993a0; font: .67rem ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.04em; text-align:center; }
+
 @media(max-width:800px){
 	.hero { padding-top:0; }
 	.hero-stage { min-height:0; }

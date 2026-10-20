@@ -5,8 +5,9 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ArrowDown, ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react'
 import ExperienceTimeline, { type Experience } from './experience-timeline'
+import EducationTimeline from './education-timeline'
 import ArchitecturePreview from './architecture-diagram'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -51,6 +52,48 @@ function SkillMark({ skill }: { skill: string }) {
   return <span className={`skill-logo logo-${skill.toLowerCase().replace(/[^a-z0-9]/g, '')}`} aria-hidden="true"><img src={source} alt="" /></span>
 }
 
+function CaseStudyCard({ item, index, scrollYProgress }: {
+  item: Experience
+  index: number
+  scrollYProgress: MotionValue<number>
+}) {
+  const prefersReducedMotion = useReducedMotion()
+  const focusPoint = 0.14 + index * 0.25
+  const caseScale = useTransform(
+    scrollYProgress,
+    [Math.max(0, focusPoint - 0.1), focusPoint, Math.min(1, focusPoint + 0.1)],
+    [1, 1.08, 1],
+  )
+
+  return (
+    <motion.article className="case-study" style={{ scale: prefersReducedMotion ? undefined : caseScale }}>
+      <div className="case-number mono">{item.number}</div>
+      <div className="case-main">
+        <div className="case-meta"><span>{item.org}</span><span>{item.period}</span></div>
+        <h3>{item.title}</h3>
+        <p className="case-role">{item.role} <i>·</i> {item.location}</p>
+        <p className="case-summary">{item.summary}</p>
+        <ul>{item.bullets.map(b => <li key={b}>{b}</li>)}</ul>
+        <div className="tags" aria-label="Technologies used">{item.tags.map(t => <span className="skill-chip" key={t} aria-label={t} title={t}><SkillMark skill={t} /></span>)}</div>
+      </div>
+      {index === 0 ? <ArchitecturePreview /> : (
+        <div className="case-diagram">
+          <img
+            src={
+              item.org === 'B-SMART TRAVEL'
+                ? '/bsmarttravel.png'
+                : item.org === 'COMUNIK CRM'
+                  ? '/comunikcrm.png'
+                  : '/vermeg.png'
+            }
+            alt={`${item.org} system diagram`}
+          />
+        </div>
+      )}
+    </motion.article>
+  )
+}
+
 function Topology() {
   return <div className="topology" aria-label="Illustrative software delivery path from product services to cloud infrastructure">
     <div className="topology-grid" />
@@ -78,10 +121,7 @@ export default function Page() {
     target: workContainerRef,
     offset: ['start start', 'end end'],
   })
-  const workX = useTransform(scrollYProgress, [0, 1], ['0%', '-75%'])
-  const architectureScale = useTransform(scrollYProgress, [0, 0.08, 0.2, 0.34], [0.9, 2, 2, 0.72])
-  const architectureX = useTransform(scrollYProgress, [0, 0.08, 0.2, 0.34], [0, 0, 360, 360])
-  const architectureOpacity = useTransform(scrollYProgress, [0, 0.08, 0.24, 0.34], [0.72, 1, 1, 0])
+  const workX = useTransform(scrollYProgress, [0, 1], ['0%', '-82%'])
   const [menuOpen, setMenuOpen] = useState(false)
   const [isLight, setIsLight] = useState(true)
   const [mailCopied, setMailCopied] = useState(false)
@@ -271,18 +311,42 @@ export default function Page() {
           <p className="section-note">Four professional experiences across product development, cloud infrastructure, and delivery workflows.</p>
         </div>
         <motion.div className="horizontal-work-track" style={{ x: prefersReducedMotion ? undefined : workX }}>
-          <div className="case-list">{caseStudies.map((item, i) => <article className="case-study" key={item.org}><div className="case-number mono">{item.number}</div><div className="case-main"><div className="case-meta"><span>{item.org}</span><span>{item.period}</span></div><h3>{item.title}</h3><p className="case-role">{item.role} <i>·</i> {item.location}</p><p className="case-summary">{item.summary}</p><ul>{item.bullets.map(b => <li key={b}>{b}</li>)}</ul><div className="tags" aria-label="Technologies used">{item.tags.map(t => <span className="skill-chip" key={t} aria-label={t} title={t}><SkillMark skill={t} /></span>)}</div></div>{i === 0 ? <ArchitecturePreview style={{ x: architectureX, scale: architectureScale, opacity: architectureOpacity }} /> : <div className={`case-mark mark-${i + 1}`} aria-hidden="true"><span /></div>}</article>)}</div>
+          <div className="case-list">{caseStudies.map((item, i) => <CaseStudyCard key={item.org} item={item} index={i} scrollYProgress={scrollYProgress} />)}</div>
         </motion.div>
       </div>
     </section>
 
     <ExperienceTimeline experiences={caseStudies} />
 
-    <section className="section shell skills-section"><div className="section-head"><p className="eyebrow">05 / TECHNICAL SKILLS</p><h2>Tools for<br /><em>the system.</em></h2></div><div className="skills-grid">{skillGroups.map(([name, skills]) => <div className="skill-group" key={name as string}><p className="mono">{name as string}</p><div className="skill-marks">{(skills as string[]).map((skill, index) => <span className="skill-chip" style={{ '--delay': `${index * 90}ms` } as React.CSSProperties} key={skill} aria-label={skill} title={skill}><SkillMark skill={skill} /></span>)}</div></div>)}</div></section>
+    <section className="section shell skills-section">
+      <div className="section-head"><p className="eyebrow">05 / TECHNICAL SKILLS</p><h2>Tools for<br /><em>the system.</em></h2></div>
+      <div className="skills-grid">{skillGroups.map(([name, skills]) => <div className="skill-group" key={name as string}><p className="mono">{name as string}</p><div className="skill-marks">{(skills as string[]).map((skill, index) => <span className="skill-chip" style={{ '--delay': `${index * 90}ms` } as React.CSSProperties} key={skill} aria-label={skill} title={skill}><SkillMark skill={skill} /></span>)}</div></div>)}</div>
+    </section>
 
-    <section id="education" className="section shell education-section"><div className="section-head"><p className="eyebrow">06 / EDUCATION</p><h2>The foundation<br /><em>underneath.</em></h2></div><div className="education-list">{[['Engineering Degree in Software Engineering', 'Higher Institute of Multimedia Arts of Manouba', '2023 – 2026', 'Manouba, Tunisia'], ["Bachelor’s Degree in Information Technology", 'Higher Institute of Technological Studies of Bizerte', '2020 – 2023', 'Bizerte, Tunisia'], ['Technical Sciences Baccalaureate', 'Farabi High School', '2020', 'Manouba, Tunisia']].map(([degree, school, period, location]) => <div className="education-item" key={school}><p className="mono">{period}</p><div><h3>{degree}</h3><p>{school}</p><span>{location}</span></div></div>)}</div><div className="languages"><p className="mono">LANGUAGES</p><span>Arabic <i>Native</i></span><span>French <i>Fluent</i></span><span>English <i>Advanced</i></span></div></section>
+    <EducationTimeline
+      education={[
+        {
+          degree: 'Engineering Degree in Software Engineering',
+          school: 'Higher Institute of Multimedia Arts of Manouba',
+          period: '2023 – 2026',
+          location: 'Manouba, Tunisia',
+        },
+        {
+          degree: 'Bachelor’s Degree in Information Technology',
+          school: 'Higher Institute of Technological Studies of Bizerte',
+          period: '2020 – 2023',
+          location: 'Bizerte, Tunisia',
+        },
+        {
+          degree: 'Technical Sciences Baccalaureate',
+          school: 'Farabi High School',
+          period: '2020',
+          location: 'Manouba, Tunisia',
+        },
+      ]}
+    />
 
     <section id="contact" className="contact-section"><div className="shell contact-inner"><div><p className="eyebrow">07 / CONTACT</p><h2>Let&apos;s build<br /><em>what&apos;s next.</em></h2></div><div className="contact-details"><p className="contact-prompt">Open to conversations about software engineering, cloud infrastructure, and thoughtful technical work.</p><a href="mailto:amdouniwajdiii@gmail.com">amdouniwajdiii@gmail.com <ArrowUpRight size={18} /></a><a href="tel:+21620472338">+216 20 472 338</a><div className="social-links"><a href="https://linkedin.com/in/wajdi-amdouni">LinkedIn ↗</a><a href="https://github.com/redddFF">GitHub ↗</a></div></div></div></section>
-    <footer className="shell footer"><span>© 2026 Wajdi Amdouni</span><span>wajdiamdouni.com</span><a href="#top">Back to top ↑</a></footer>
+    <footer className="shell footer"><span>© 2026 Wajdi Amdouni</span><span>www.wajdiamdouni.com</span><a href="#top">Back to top ↑</a></footer>
   </main>
 }

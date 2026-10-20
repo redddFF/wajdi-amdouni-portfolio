@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import { Manrope, Syne } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
+import DesktopOnly from '../src/components/DesktopOnly'
 import './globals.css'
 
 const bodyFont = Manrope({
@@ -49,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased ${bodyFont.variable} ${displayFont.variable}`}>
-        {children}
+        <DesktopOnly>{children}</DesktopOnly>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
